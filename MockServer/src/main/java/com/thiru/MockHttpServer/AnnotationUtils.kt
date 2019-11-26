@@ -31,37 +31,17 @@ class AnnotationUtils {
                 addMethods(annotation.uri, "HEAD", declaredMethod)
             } else if (annotation is OPTIONS) {
                 addMethods(annotation.uri, "OPTIONS", declaredMethod)
-            } else if (annotation is TRACE) {
-                addMethods(annotation.uri, "TRACE", declaredMethod)
-            } else if (annotation is CONNECT) {
-                addMethods(annotation.uri, "CONNECT", declaredMethod)
             } else if (annotation is PATCH) {
                 addMethods(annotation.uri, "PATCH", declaredMethod)
-            } else if (annotation is PROPFIND) {
-                addMethods(annotation.uri, "PROPFIND", declaredMethod)
-            } else if (annotation is PROPPATCH) {
-                addMethods(annotation.uri, "PROPPATCH", declaredMethod)
-            } else if (annotation is MKCOL) {
-                addMethods(annotation.uri, "MKCOL", declaredMethod)
-            } else if (annotation is MOVE) {
-                addMethods(annotation.uri, "MOVE", declaredMethod)
-            } else if (annotation is COPY) {
-                addMethods(annotation.uri, "COPY", declaredMethod)
-            } else if (annotation is LOCK) {
-                addMethods(annotation.uri, "LOCK", declaredMethod)
-            } else if (annotation is UNLOCK) {
-                addMethods(annotation.uri, "UNLOCK", declaredMethod)
-            } else {
-
             }
         }
 
         fun addMethods(
-            uri: String?,
+            uri: String,
             requestMethod: String,
             declaredMethod: java.lang.reflect.Method
         ) {
-            var methods = this.annotations.get(uri!!)
+            var methods = this.annotations.get(uri)
             if (methods != null) {
                 methods.add(
                     Method(
@@ -77,14 +57,30 @@ class AnnotationUtils {
                     )
                 )
             }
-            annotations.put(uri!!, methods)
+            annotations.put(uri, methods)
         }
 
         fun getMethods(
             requestMethod: String,
             uri: String
         ): List<Method> {
-            return this.annotations.get(uri)!!.filter { it.requestMethod == requestMethod }
+            val annotatedMethods =
+                this.annotations.filter { it.key.toRegex().matches(uri) }.values.flatten()
+                    .filter { it.requestMethod.equals(requestMethod) }
+
+            var methodsMatchingSignature: List<Method>? = null
+
+            if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals(
+                    "PATCH"
+                )
+            ) {
+                methodsMatchingSignature = annotatedMethods
+                    .filter { it.method.parameterTypes.size == 2 && it.method.parameterTypes[0] == String::class.java && it.method.parameterTypes[1] == String::class.java }
+            } else {
+                methodsMatchingSignature = annotatedMethods
+                    .filter { it.method.parameterTypes.size == 1 && it.method.parameterTypes[0] == String::class.java }
+            }
+            return methodsMatchingSignature
         }
     }
 }

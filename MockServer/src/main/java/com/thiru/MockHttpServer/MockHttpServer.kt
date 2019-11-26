@@ -13,32 +13,50 @@ class MockHttpServer(mockServerController: Class<out Any>) : NanoHTTPD(8080) {
     }
 
     override fun serve(session: IHTTPSession?): Response {
+        val requestBody = HashMap<String, String>()
+        val requestMethod = session!!.method?.name
+        if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("PATCH"))
+            session.parseBody(requestBody)
         return processRequest(
-            session?.method?.name!!,
-            session?.uri.toString(),
-            session?.parameters!!
+            requestMethod!!,
+            session.uri.toString(),
+            session.parameters!!,
+            requestBody
         )
     }
 
     private fun processRequest(
         requestMethod: String,
         uri: String,
-        queryParams: Map<String, List<String>>
+        pathParams: Map<String, List<String>>,
+        requestBody: Map<String, String>
     ): Response {
         var result =
             newFixedLengthResponse(Response.Status.OK, "text/html", "{\"result\":\"Not found\"}")
         val annotatedMethods = AnnotationUtils.getMethods(requestMethod, uri)
         for (declaredMethod in annotatedMethods) {
             try {
-                val json: String = ObjectMapper().writeValueAsString(queryParams)
-                val response =
-                    declaredMethod.method.invoke(
+                val pathParamsjson: String = ObjectMapper().writeValueAsString(pathParams)
+                val requestBodyJson: String? = requestBody.get("postData")
+                var response: com.thiru.MockHttpServer.Models.Response
+                if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals(
+                        "PATCH"
+                    )
+                ) {
+                    response = declaredMethod.method.invoke(
                         controllerClassObject.newInstance(),
-                        json
+                        pathParamsjson,
+                        requestBodyJson
                     ) as com.thiru.MockHttpServer.Models.Response
+                } else {
+                    response = declaredMethod.method.invoke(
+                        controllerClassObject.newInstance(),
+                        pathParamsjson
+                    ) as com.thiru.MockHttpServer.Models.Response
+                }
 
                 result = newFixedLengthResponse(
-                    Response.Status.lookup(response?.status?.requestStatus!!),
+                    Response.Status.lookup(response.status?.requestStatus!!),
                     response.mimeType,
                     response.data
                 )
