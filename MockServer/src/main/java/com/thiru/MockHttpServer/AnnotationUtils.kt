@@ -70,15 +70,20 @@ class AnnotationUtils {
 
             var methodsMatchingSignature: List<Method>? = null
 
-            if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals(
-                    "PATCH"
-                )
-            ) {
+            if (requestMethod.equals("PUT") || requestMethod.equals("POST")) {
                 methodsMatchingSignature = annotatedMethods
-                    .filter { it.method.parameterTypes.size == 2 && it.method.parameterTypes[0] == String::class.java && it.method.parameterTypes[1] == String::class.java }
+                    .filter {
+                        it.method.parameterTypes.size == 2
+                                && it.method.parameterTypes[0].isInstance(String::class.java)
+                                && it.method.parameterTypes[1].isInstance(String::class.java)
+                    }
             } else {
                 methodsMatchingSignature = annotatedMethods
-                    .filter { it.method.parameterTypes.size == 1 && it.method.parameterTypes[0] == String::class.java }
+                    .filter {
+                        it.method.parameterTypes.size == 1 && it.method.parameterTypes[0].isInstance(
+                            String::class.java
+                        )
+                    }
             }
             return methodsMatchingSignature
         }

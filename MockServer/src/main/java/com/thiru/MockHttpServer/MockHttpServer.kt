@@ -14,11 +14,11 @@ class MockHttpServer(mockServerController: Class<out Any>) : NanoHTTPD(8080) {
 
     override fun serve(session: IHTTPSession?): Response {
         val requestBody = HashMap<String, String>()
-        val requestMethod = session!!.method?.name
-        if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("PATCH"))
+        val requestMethod = session!!.method.name
+        if (requestMethod.equals("PUT") || requestMethod.equals("POST"))
             session.parseBody(requestBody)
         return processRequest(
-            requestMethod!!,
+            requestMethod,
             session.uri.toString(),
             session.parameters!!,
             requestBody
@@ -39,10 +39,7 @@ class MockHttpServer(mockServerController: Class<out Any>) : NanoHTTPD(8080) {
                 val pathParamsjson: String = ObjectMapper().writeValueAsString(pathParams)
                 val requestBodyJson: String? = requestBody.get("postData")
                 var response: com.thiru.MockHttpServer.Models.Response
-                if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals(
-                        "PATCH"
-                    )
-                ) {
+                if (requestMethod.equals("PUT") || requestMethod.equals("POST")) {
                     response = declaredMethod.method.invoke(
                         controllerClassObject.newInstance(),
                         pathParamsjson,

@@ -9,7 +9,7 @@ import org.json.JSONObject
 class Controller {
 
     @GET("/test/1")
-    fun sendTestResponse1(pathParamsJson: String, requestBodyJson: String): Response {
+    fun sendTestResponse1(pathParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
         return Response(
             Status.OK,
@@ -40,7 +40,7 @@ class Controller {
     }
 
     @GET("/test/\\d*")
-    fun sendTestResponse(queryParamsJson: String, requestBodyJson: String): Response {
+    fun sendTestResponse(queryParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
         return Response(
             Status.OK,
@@ -60,7 +60,7 @@ class Controller {
     }
 
     @POST("/test/\\d*")
-    fun sendTestPostResponse(queryParamsJson: String, requestBodyJson: String): Response {
+    fun sendTestPostResponse(queryParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
         return Response(
             Status.OK,
