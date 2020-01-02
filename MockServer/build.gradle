@@ -1,11 +1,24 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
+configurations {
+    // configuration that holds jars to include in the jar
+    externalLibs
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+    externalLibs 'org.nanohttpd:nanohttpd:2.3.1'
+    externalLibs 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+}
+
+jar {
+    from {
+        configurations.externalLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 sourceCompatibility = "7"

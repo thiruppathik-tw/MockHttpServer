@@ -8,6 +8,7 @@ import org.json.JSONObject
 
 class Controller {
 
+    @SuppressWarnings("unused")
     @GET("/test/1")
     fun sendTestResponse1(pathParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
@@ -18,6 +19,7 @@ class Controller {
         )
     }
 
+    @SuppressWarnings("unused")
     @GET("/test/1")
     fun sendTestResponse1(pathParamsJson: String): Response {
         //Business Logic
@@ -28,7 +30,7 @@ class Controller {
         )
     }
 
-
+    @SuppressWarnings("unused")
     @GET("/test/")
     fun sendTestResponse(): Response {
         //Business Logic
@@ -39,6 +41,7 @@ class Controller {
         )
     }
 
+    @SuppressWarnings("unused")
     @GET("/test/\\d*")
     fun sendTestResponse(queryParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
@@ -49,6 +52,7 @@ class Controller {
         )
     }
 
+    @SuppressWarnings("unused")
     @GET("/test/\\d*")
     fun sendTestResponse(queryParamsJson: String): Response {
         //Business Logic
@@ -59,6 +63,7 @@ class Controller {
         )
     }
 
+    @SuppressWarnings("unused")
     @POST("/test/\\d*")
     fun sendTestPostResponse(queryParamsJson: String, requestBodyJson: String?): Response {
         //Business Logic
@@ -69,6 +74,7 @@ class Controller {
         )
     }
 
+    @SuppressWarnings("unused")
     @POST("/test/\\d*")
     fun sendTestPostResponse(queryParamsJson: String): Response {
         //Business Logic
