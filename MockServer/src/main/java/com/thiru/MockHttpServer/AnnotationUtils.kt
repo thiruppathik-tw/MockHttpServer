@@ -80,9 +80,7 @@ class AnnotationUtils {
             } else {
                 methodsMatchingSignature = annotatedMethods
                     .filter {
-                        it.method.parameterTypes.size == 1 && it.method.parameterTypes[0].isInstance(
-                            String::class.java
-                        )
+                        it.method.parameterTypes.size == 1 && it.method.parameterTypes[0] == String::class.java
                     }
             }
             return methodsMatchingSignature
